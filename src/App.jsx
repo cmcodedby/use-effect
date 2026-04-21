@@ -1,55 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-import {useEffect} from 'react';
 
+
+import { useState,useEffect } from "react";
+import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-// save data that is fetched; initially set to empty list because there is no data
+const [query, setQuery] = useState('')
 const [data, setData] = useState([])
-  useEffect(() => {
+const handleChange = (e) => {
+   // console.log(e.target.value)
+    setQuery(e.target.value)
+}
 
-    const myHeaders = new Headers();
-myHeaders.append("x-rapidapi-key", "2c16431219msh4e66357e0f01a8fp1635c4jsn34d3803ff9bb");
+const getData = async() => {
 
-const requestOptions = {
-  method: "GET",
-  headers: myHeaders,
-  redirect: "follow"
+  const options = {
+	method: 'GET',
+	headers: {
+		'x-rapidapi-key': '2c16431219msh4e66357e0f01a8fp1635c4jsn34d3803ff9bb',
+		'x-rapidapi-host': 'pokemon-api3.p.rapidapi.com',
+		'Content-Type': 'application/json'
+	}
 };
+const url = `https://pokemon-api3.p.rapidapi.com/pokemon?name=${query}`
+try{
+  const response = await fetch(url, options);
+	const result = await response.json();
+	setData(result);
+}
+catch (error){
+  console.error(error);
+}
 
-fetch("https://yelp-business-api.p.rapidapi.com/search?location=Philadelphia%2C%20PA&search_term=Shoes&limit=5&offset=0&business_details_type=basic", requestOptions)
-  .then((response) => response.json())
-  .then((result) => setData(result.business_search_result)) // save data as a varaible
-  .catch((error) => console.error(error)); // catch errors if applicable
+}
 
 
+return (
 
+  <>
+  <input placeholder = 'Enter Pokemon Name' value = {query} onChange={handleChange} /> 
+  <button onClick = {getData}>Get Pokemon Info </button>
+  </>
 
-  }, []);
-  // if there's no data, don't return anything
-
-  if (!data === ([])) {
-    return <></>
-  } else{
-
+)
+}
   
-  return (
-    <div className= "container">
-   <h1>APIs & useEffect</h1>
-     
 
-     {
-      data.map((obj) => { 
-        return <p key = {obj.id} > {obj.name} </p>
-      })
 
-     }
-     </div>
-  )
-}
-}
+
 export default App
